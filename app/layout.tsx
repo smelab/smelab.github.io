@@ -7,6 +7,8 @@ import { Navbar } from '../components/nav';
 import './global.css';
 import { baseUrl } from './sitemap';
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
