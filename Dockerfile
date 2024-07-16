@@ -1,20 +1,21 @@
-FROM node:lts-slim
+FROM oven/bun:debian as builder
 
 WORKDIR /app
 
 COPY . .
 
-RUN npm install
-RUN npm run build
+RUN bun install
+RUN bun run build
+RUN tar -czf next-dist.tar.gz ./.next
 
-FROM node:lts-slim
+FROM oven/bun:slim
 
 WORKDIR /app
 
-COPY --from=0 /app/.next /app/.next
+COPY --from=builder /app/next-dist.tar.gz /app/next-dist.tar.gz
+COPY --from=builder /app/bun.lockb /app/bun.lockb
 COPY ./entrypoint.sh ./entrypoint.sh
 COPY ./public/ ./public/
 COPY ./package.json ./package.json
-COPY ./package-lock.json ./package-lock.json
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
